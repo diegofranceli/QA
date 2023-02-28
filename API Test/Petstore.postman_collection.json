@@ -19,12 +19,197 @@
 			"item": [
 				{
 					"name": "Create User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"function randomString(minValue, maxValue, dataSet = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ') {\r",
+									"    if (!minValue) {\r",
+									"        minValue = 20;\r",
+									"        maxValue = 20;\r",
+									"    }\r",
+									"\r",
+									"    if (!maxValue) {\r",
+									"        maxValue = minValue;\r",
+									"    }\r",
+									"\r",
+									"    let length = _.random(minValue, maxValue),\r",
+									"        randomString = \"\";\r",
+									"\r",
+									"    for (let i = 0; i < length; i++)\r",
+									"        randomString += dataSet.charAt(Math.floor(Math.random() * dataSet.length));\r",
+									"    return randomString;\r",
+									"}\r",
+									"\r",
+									"window = {};\r",
+									"pm.sendRequest(\"https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.js\", (error, response) => {\r",
+									"var text = response.text();\r",
+									"(new Function(text))();\r",
+									"\r",
+									"window.faker.locale = \"es\";\r",
+									"\r",
+									"pm.environment.set(\"random_number\", _.random(1, 1000000))\r",
+									"\r",
+									"pm.environment.set(\"random_username\",window.faker.internet.userName())\r",
+									"\r",
+									"pm.environment.set(\"random_firstname\",window.faker.name.firstName())\r",
+									"\r",
+									"pm.environment.set(\"random_lastname\",window.faker.name.lastName())\r",
+									"\r",
+									"pm.environment.set(\"random_email\",window.faker.internet.email(pm.environment.get(\"random_firstname\"),'Carvalho','gmail.com'))\r",
+									"\r",
+									"pm.sendRequest(\"https://randomuser.me/api/?nat=us&inc=phone\", (err, res) => {\r",
+									"    pm.environment.set('random_phoneNumber', res.json().results[0].phone)\r",
+									"}) \r",
+									"\r",
+									"\r",
+									"pm.environment.set(\"randomString\", randomString());\r",
+									"\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var reponsejson = pm.response.json()\r",
+									"pm.test(\"checking status code 200\",function(){\r",
+									"    \r",
+									"    pm.response.to.have.status(200)\r",
+									"\r",
+									"})\r",
+									"\r",
+									"pm.test(\"checking response body\",function(){\r",
+									"\r",
+									"    pm.expect(reponsejson).to.have.property(\"type\")\r",
+									"    pm.expect(reponsejson).to.have.property(\"code\")\r",
+									"    pm.expect(reponsejson).to.have.property(\"message\")\r",
+									"\r",
+									"})\r",
+									"\r",
+									"pm.test(\"checking message is equal to id\", function(){\r",
+									"\r",
+									"    pm.expect(reponsejson.message).to.be.eq(String(pm.environment.get(\"random_number\")))\r",
+									"\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"id\": \"1003\",\r\n  \"username\": \"danilogerminiani\",\r\n  \"firstName\": \"Danilo\",\r\n  \"lastName\": \"Carvalho\",\r\n  \"email\": \"diego@123.com.br\",\r\n  \"password\": \"123\",\r\n  \"phone\": \"35998738651\",\r\n  \"userStatus\": 0\r\n}",
+							"raw": "{\r\n  \"id\": \"{{random_number}}\",\r\n  \"username\": \"{{random_username}}\",\r\n  \"firstName\": \"{{random_firstname}}\",\r\n  \"lastName\": \"Carvalho\",\r\n  \"email\": \"{{random_email}}\",\r\n  \"password\": \"{{randomString}}\",\r\n  \"phone\": \"{{random_phoneNumber}}\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/v2/user",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"v2",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create user with wrong email",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"function randomString(minValue, maxValue, dataSet = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ') {\r",
+									"    if (!minValue) {\r",
+									"        minValue = 20;\r",
+									"        maxValue = 20;\r",
+									"    }\r",
+									"\r",
+									"    if (!maxValue) {\r",
+									"        maxValue = minValue;\r",
+									"    }\r",
+									"\r",
+									"    let length = _.random(minValue, maxValue),\r",
+									"        randomString = \"\";\r",
+									"\r",
+									"    for (let i = 0; i < length; i++)\r",
+									"        randomString += dataSet.charAt(Math.floor(Math.random() * dataSet.length));\r",
+									"    return randomString;\r",
+									"}\r",
+									"\r",
+									"window = {};\r",
+									"pm.sendRequest(\"https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.js\", (error, response) => {\r",
+									"var text = response.text();\r",
+									"(new Function(text))();\r",
+									"\r",
+									"window.faker.locale = \"es\";\r",
+									"\r",
+									"pm.environment.set(\"random_number\", _.random(1, 1000000))\r",
+									"\r",
+									"pm.environment.set(\"random_username\",window.faker.internet.userName())\r",
+									"\r",
+									"pm.environment.set(\"random_firstname\",window.faker.name.firstName())\r",
+									"\r",
+									"pm.environment.set(\"random_lastname\",window.faker.name.lastName())\r",
+									"\r",
+									"pm.sendRequest(\"https://randomuser.me/api/?nat=us&inc=phone\", (err, res) => {\r",
+									"    pm.environment.set('random_phoneNumber', res.json().results[0].phone)\r",
+									"}) \r",
+									"\r",
+									"\r",
+									"pm.environment.set(\"randomString\", randomString());\r",
+									"\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var reponsejson = pm.response.json()\r",
+									"pm.test(\"checking status code 400\",function(){\r",
+									"    // the expected error to be 400 because the email format is wrong\r",
+									"    pm.response.to.have.status(400)\r",
+									"\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"{{random_number}}\",\r\n  \"username\": \"{{random_username}}\",\r\n  \"firstName\": \"{{random_firstname}}\",\r\n  \"lastName\": \"Carvalho\",\r\n  \"email\": \"test\",\r\n  \"password\": \"{{randomString}}\",\r\n  \"phone\": \"{{random_phoneNumber}}\",\r\n  \"userStatus\": 0\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -46,18 +231,93 @@
 				},
 				{
 					"name": "Get user by username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var reponsejson = pm.response.json()\r",
+									"pm.test(\"checking status code 200\",function(){\r",
+									"    \r",
+									"    pm.response.to.have.status(200)\r",
+									"\r",
+									"})\r",
+									"\r",
+									"pm.test(\"checking if the name is the correct\", function(){\r",
+									"\r",
+									"    pm.expect(reponsejson.username).to.be.eq(pm.environment.get(\"random_username\"))\r",
+									"\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Checking if the email is the correct\"), function(){\r",
+									"\r",
+									"    pm.expect(responsejson.email).to.be.eq(pm.environment.get(\"random_email\"))\r",
+									"\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Checking if the phone number is the correct\"), function(){\r",
+									"    \r",
+									"    pm.expect(responsejson.phone).to.be.eq(pm.environment.get(\"random_phoneNumber\"))\r",
+									"\r",
+									"}\r",
+									"\r",
+									"// pm.test(\"Checking the data types\"), function(){ \r",
+									"//     console.log(reponsejson.id)\r",
+									"//     pm.expect(responsejson.id).to.be.a('object')\r",
+									"\r",
+									"// }"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{URL}}/v2/user/{{username}}",
+							"raw": "{{URL}}/v2/user/{{random_username}}",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
 								"v2",
 								"user",
-								"{{username}}"
+								"{{random_username}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var reponsejson = pm.response.json()\r",
+									"pm.test(\"checking status code 404\",function(){\r",
+									"    \r",
+									"    pm.response.to.have.status(404)\r",
+									"\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/v2/user/dvdfbfghdfh",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"v2",
+								"user",
+								"dvdfbfghdfh"
 							]
 						}
 					},
@@ -70,7 +330,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"id\": \"1003\",\r\n  \"username\": \"danilogerminiani\",\r\n  \"firstName\": \"Danilo\",\r\n  \"lastName\": \"Germiniani\",\r\n  \"email\": \"diego@123.com.br\",\r\n  \"password\": \"123\",\r\n  \"phone\": \"35998738651\",\r\n  \"userStatus\": 0\r\n}",
+							"raw": "{\r\n  \"id\": \"1003\",\r\n  \"username\": \"{{random_username}}\",\r\n  \"firstName\": \"Danilo\",\r\n  \"lastName\": \"Germiniani\",\r\n  \"email\": \"{{random_email}}\",\r\n  \"password\": \"{{randomString}}\",\r\n  \"phone\": \"{{random_phoneNumber}}\",\r\n  \"userStatus\": 0\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -78,14 +338,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{URL}}/v2/user/{{username}}",
+							"raw": "{{URL}}/v2/user/{{random_username}}",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
 								"v2",
 								"user",
-								"{{username}}"
+								"{{random_username}}"
 							]
 						}
 					},
@@ -97,14 +357,14 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{URL}}/v2/user/{{username}}",
+							"raw": "{{URL}}/v2/user/{{random_username}}",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
 								"v2",
 								"user",
-								"{{username}}"
+								"{{random_username}}"
 							]
 						}
 					},
