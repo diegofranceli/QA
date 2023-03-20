@@ -2,6 +2,8 @@
 import user from '../../fixtures/user.json'
 const el = require ('../../support/pages/main').ELEMENTS
 import { faker } from '@faker-js/faker';
+import user_fixture from '../../fixtures/user.json'
+import  '../../support/commands'
 
 let userData = {
   username: faker.internet.userName(),
@@ -34,13 +36,7 @@ describe('checking the elements on main page', () => {
       })
 
       it('Verify login successfully', () => {
-        cy.get(el.login_menu_opt).should('exist')
-        cy.get(el.login_menu_opt).click()
-        cy.wait(1000)
-        cy.get(el.username_txt_fiel_login).click().type(userData.username)
-        cy.wait(1000)
-        cy.get(el.password_txt_field_login).click().type(userData.password)
-        cy.get(el.login_btn).contains('Log in').click()
+        cy.login({ user: user_fixture.user, password: user_fixture.password })
       })
 
   })
