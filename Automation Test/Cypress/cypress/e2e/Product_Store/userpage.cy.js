@@ -41,13 +41,7 @@ describe('Checking the elements on user page', () => {
               });
         
             // Soma os preços e exibe o valor da soma
-            cy.get('@s6Price').then((s6Price) => {
-              cy.get('@sonyValue').then((sonyValue) => {
-                const sum = s6Price + sonyValue;
-                cy.wrap(sum).as('sum');
-                cy.log(`A soma dos preços do Samsung Galaxy S6 e Nokia Lumia 1520 é de $${sum.toFixed(2)}.`);
-              });
-            });
+            
 
         cy.go('back');
         cy.contains('Phones').click()
@@ -82,6 +76,14 @@ describe('Checking the elements on user page', () => {
          cy.contains('Samsung galaxy s6').should('be.visible')
          cy.contains('Sony vaio i5').should('be.visible')
          
+         cy.get('@s6Price').then((s6Price) => {
+            cy.get('@sonyValue').then((sonyValue) => {
+              const sum = s6Price + sonyValue;
+            //   cy.wrap(sum).as('sum_sum');
+            //   cy.log(`A soma dos preços do Samsung Galaxy S6 e Nokia Lumia 1520 é de $${sum.toFixed(2)}.`);
+            cy.get('#totalp').should('contain', sum)
+            });
+          });
 
        })   
       
