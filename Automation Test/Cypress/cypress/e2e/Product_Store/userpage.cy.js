@@ -66,7 +66,7 @@ describe('Checking the elements on user page', () => {
         //     expect(str).eql(el.add_to_cart_successfully_alert)
         // })
         cy.wait(1000)
-        cy.on("window:confirm", (t) => { // clicando no botão OK do pop up
+        cy.on("window:confirm", (t) => { // click on POP UP botton Ok
             cy.get('button#confirm').click()
          })
          
