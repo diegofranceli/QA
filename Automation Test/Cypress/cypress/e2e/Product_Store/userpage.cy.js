@@ -13,7 +13,6 @@ describe('Checking the elements on user page', () => {
     it('Adding to cart', () => {
         cy.clearAllLocalStorage
         // cy.login({ user: user_fixture.user, password: user_fixture.password })  // sets a cookie
-        cy.log("treinamento de branch")
         cy.contains('Phones').click()
         cy.contains('Samsung galaxy s6').click()
         cy.get('.col-sm-12 > h3')
